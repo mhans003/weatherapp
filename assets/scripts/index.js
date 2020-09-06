@@ -33,6 +33,7 @@ function locationRetrieved(position) {
     //Clear the current location element. 
     currentLocationElement.innerHTML = ""; 
 
+    //Create the button for getting local weather. 
     var getLocalWeatherButton = document.createElement("button"); 
     getLocalWeatherButton.setAttribute("type","button");
     getLocalWeatherButton.classList.add("btn","btn-info","btn-sm","mt-2"); 
@@ -42,25 +43,17 @@ function locationRetrieved(position) {
     //Clear the loading message and replace with the get local weather button.
     getLocalDiv.innerHTML = ""; 
     getLocalDiv.appendChild(getLocalWeatherButton); 
-    //currentLocationElement.appendChild(getLocalWeatherButton); 
-
-   
-
-    //currentLatitude = document.querySelector("#latitude").innerText; 
+  
+    //Access the current latitude and longitude. 
     currentLatitude = position.coords.latitude; 
-    //currentLongitude = document.querySelector("#longitude").innerText;
     currentLongitude = position.coords.longitude; 
-    console.log(currentLatitude); 
-    console.log(currentLongitude); 
-
-
+   
+    //Allow user to click the button to retrieve local weather.
     getLocalWeatherButton.addEventListener("click", constructQueryString); 
 }
 
 function constructQueryString() {
     //This function will build a request string to be sent to the weather api. 
-    console.log(currentLatitude,currentLongitude);
-    console.log(event.target.id); 
 
     //Initialize constant components of the query url. 
     var APIKey = `cad48b62df2e8f5e0daca44aa7d21c78`; 
@@ -70,15 +63,12 @@ function constructQueryString() {
         //If the button pressed was to get local weather data, use latitude and longitude that came from the navigator object in the window.
         queryString += `lat=${currentLatitude}&lon=${currentLongitude}`; 
     } else if(event.target.id === "search-button") {
-        console.log("search button clicked"); 
-        console.log(searchInput.value); 
+        //If the button pressed was the search button, use the search terms. 
         queryString += `q=${searchInput.value}`; 
     }
 
     //Add the api key to the end of the query string. 
     queryString += `&appid=${APIKey}`; 
-
-    console.log(queryString); 
 
     //Using the constructed query string, retrieve the weather data 
     retrieveWeatherData(queryString, APIKey); 
@@ -98,59 +88,30 @@ function retrieveWeatherData(query, APIKey) {
         return response.json(); 
     })
     .then(weatherData => {
-
-        //console.log(Date.now() - 86400000); 
-        //console.log(Date.now()); 
-        //Call for UV data 
+        //Make request to the api for UV data, using the retrieved data coordinates. 
         fetch(`http://api.openweathermap.org/data/2.5/uvi/forecast?appid=${APIKey}&lat=${weatherData.coord.lat}&lon=${weatherData.coord.lon}&cnt=1`)
-        //fetch(`http://api.openweathermap.org/data/2.5/uvi/history?appid=${APIKey}&lat=${weatherData.coord.lat}&lon=${weatherData.coord.lon}&cnt=5&start=${Date.now() - 86400000}&end=${Date.now()}`)
         .then(uvResponse => uvResponse.json())
         .then(uvData => {
-
-            //console.log(weatherData);
-            //console.log(uvData); 
-            //console.log("something else");
             //Style the header depending on the weather data.  
             styleHeader(weatherData); 
+
+            //Display the current weather by passing in the data set and the uv data set. 
             displayCurrentWeather(weatherData,uvData); 
-
         }); 
-
-        /*
-        console.log(weatherData);
-        console.log("something else");
-        //Style the header depending on the weather data.  
-        styleHeader(weatherData); 
-        displayCurrentWeather(weatherData); 
-        */
     })
     .catch(error => {
-        //alert.classList.add("d-block");
+        //If there is an error, render the alert on the page.
         renderAlert(); 
-          
-        console.error(error); 
     }); 
     
 }
 
 function styleHeader(data) {
-    //console.log(data); 
-    //console.log(data.weather[0].description); 
-    //console.log(data.name); 
-
-    //console.log(document.querySelector("header")); 
-
-    //Insert a random image from Unsplash. 
+    //Insert a random image from Unsplash to better fit the current city. 
     document.querySelector("header").style.backgroundImage = `url('https://source.unsplash.com/1600x900/?,${data.weather[0].description},sky,${data.name}')`; 
-    //console.log(document.querySelector("header").style); 
-
-    //Style depending on 
 }
 
 function displayCurrentWeather(data, uvdata) {
-
-    console.log("WEATHER DATA:",data); 
-    console.log("UV DATA:",uvdata); 
 
     //Clear the current weather data.
     currentLocationElement.innerHTML = ""; 
@@ -255,8 +216,6 @@ function toggleTemperature() {
     var elements = document.querySelectorAll(".temp"); 
     //For each element, change to the appropriate unit of measurement. 
     elements.forEach((element) => {
-        console.log(element); 
-
         //Access this particular element's inner temperature measurement. 
         var temp = Number(element.innerText); 
         console.log(temp); 
@@ -270,29 +229,31 @@ function toggleTemperature() {
 
     //Change the value of fahrenheit (true/false). 
     fahrenheit = fahrenheit ? false : true; 
-    //console.log("in function"); 
-    
 }
 
 function renderAlert() {
-
+    //Render the alert for invalid search.
     //Clear the alert container in case there is already an alert. 
     alertContainer.innerHTML = ""; 
 
+    //Create the div where the alert will sit. 
     var alertDiv = document.createElement("div"); 
     alertDiv.classList.add("alert","alert-danger","alert-dismissible","fade","show","mt-3");
     alertDiv.setAttribute("role","alert"); 
     alertDiv.innerText = "Error. Enter another location."; 
 
+    //Create the button that will be in the alert for dismissing it.
     var alertButton = document.createElement("button"); 
     alertButton.setAttribute("type","button"); 
     alertButton.classList.add("close"); 
     alertButton.setAttribute("data-dismiss","alert"); 
 
+    //Create the span that will hold the x.
     var alertSpan = document.createElement("span"); 
     alertSpan.setAttribute("aria-hidden","true");
     alertSpan.innerHTML = "&times;"; 
     
+    //Append all items. 
     alertButton.appendChild(alertSpan); 
     alertDiv.appendChild(alertButton); 
     alertContainer.appendChild(alertDiv); 
