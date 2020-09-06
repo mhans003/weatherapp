@@ -89,7 +89,7 @@ function retrieveWeatherData(query, APIKey) {
     })
     .then(weatherData => {
         //Make request to the api for UV data, using the retrieved data coordinates. 
-        fetch(`http://api.openweathermap.org/data/2.5/uvi/forecast?appid=${APIKey}&lat=${weatherData.coord.lat}&lon=${weatherData.coord.lon}&cnt=1`)
+        fetch(`https://api.openweathermap.org/data/2.5/uvi/forecast?appid=${APIKey}&lat=${weatherData.coord.lat}&lon=${weatherData.coord.lon}&cnt=1`)
         .then(uvResponse => uvResponse.json())
         .then(uvData => {
             //Style the header depending on the weather data.  
