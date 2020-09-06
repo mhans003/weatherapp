@@ -2,8 +2,15 @@
 var currentLatitude; 
 var currentLongitude; 
 
+//By default, set Fahrenheit to true; 
+var fahrenheit = true; 
+
 //HTML element variables.
 var currentLocationElement = document.querySelector("#current-location"); 
+var tempToggle = document.querySelector("#temp-toggle"); 
+
+
+
 
 //Set initial content of the current location element (#current-location) to waiting message. 
 currentLocationElement.innerHTML = "Retrieving Local Coordinates..."; 
@@ -77,6 +84,7 @@ function retrieveWeatherData(query) {
         console.log("something else");
         //Style the header depending on the weather data.  
         styleHeader(weatherData); 
+        displayCurrentWeather(weatherData); 
     }); 
     
 }
@@ -94,3 +102,72 @@ function styleHeader(data) {
 
     //Style depending on 
 }
+
+function displayCurrentWeather(data) {
+
+    //Clear the current weather data.
+    currentLocationElement.innerHTML = ""; 
+
+    //Display current location name.
+    var locationOutput = document.createElement("div"); 
+    locationOutput.classList.add("main-location"); 
+    locationOutput.innerText = data.name; 
+
+    //Add the location to the screen. 
+    currentLocationElement.appendChild(locationOutput); 
+
+    //Display current temperature. 
+    var tempOutput = document.createElement("div"); 
+    tempOutput.classList.add("main-temp"); 
+
+    if(fahrenheit) {
+        //If the user is currently selecting F, convert K to F. 
+        tempOutput.innerHTML = `<span class="temp">${kToFahrenheit(data.main.temp)}</span>&#176;`; 
+    } else {
+        //If the user is currently selecting C, convert K to C. 
+        tempOutput.innerHTML = `<span class="temp">${kToCelcius(data.main.temp)}</span>&#176;`; 
+    }
+    
+    //Add the temperature to the screen.
+    currentLocationElement.appendChild(tempOutput); 
+}
+
+function kToFahrenheit(kelvin) {
+    return Math.round((kelvin - 273.15) * (9 / 5) + 32); 
+}
+
+function kToCelcius(kelvin) {
+    return Math.round(kelvin - 273.15); 
+}
+
+function toggleTemperature() {
+    //When the user toggles the temperature unit, change the temperatures on the screen.
+    
+    //Access every element with the class of temp. 
+    var elements = document.querySelectorAll(".temp"); 
+    //For each element, change to the appropriate unit of measurement. 
+    elements.forEach((element) => {
+        console.log(element); 
+
+        //Access this particular element's inner temperature measurement. 
+        var temp = Number(element.innerText); 
+        console.log(temp); 
+        //Convert
+        if(fahrenheit) {
+            element.innerText = Math.round((temp - 32) * (5 / 9)); 
+        } else {
+            element.innerText = Math.round((temp * (9 / 5)) + 32); 
+        }
+    }); 
+
+    //Change the value of fahrenheit (true/false). 
+    fahrenheit = fahrenheit ? false : true; 
+    //console.log("in function"); 
+    
+}
+
+//EVENTS
+
+tempToggle.addEventListener("click", toggleTemperature); 
+
+
