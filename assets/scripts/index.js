@@ -25,7 +25,7 @@ function locationRetrieved(position) {
 
     var getLocalWeatherButton = document.createElement("button"); 
     getLocalWeatherButton.setAttribute("type","button");
-    getLocalWeatherButton.classList.add("btn","btn-primary","btn-sm"); 
+    getLocalWeatherButton.classList.add("btn","btn-info","btn-sm"); 
     getLocalWeatherButton.setAttribute("id","get-local-weather-button"); 
     getLocalWeatherButton.innerHTML = `Get Local Weather`;  
     currentLocationElement.appendChild(getLocalWeatherButton); 
@@ -74,9 +74,23 @@ function retrieveWeatherData(query) {
     .then(response => response.json())
     .then(weatherData => {
         console.log(weatherData);
-        console.log("something else"); 
+        console.log("something else");
+        //Style the header depending on the weather data.  
+        styleHeader(weatherData); 
     }); 
+    
+}
 
-    
-    
+function styleHeader(data) {
+    //console.log(data); 
+    //console.log(data.weather[0].description); 
+    //console.log(data.name); 
+
+    //console.log(document.querySelector("header")); 
+
+    //Insert a random image from Unsplash. 
+    document.querySelector("header").style.backgroundImage = `url('https://source.unsplash.com/1600x900/?,${data.weather[0].description},sky,${data.name}')`; 
+    //console.log(document.querySelector("header").style); 
+
+    //Style depending on 
 }
