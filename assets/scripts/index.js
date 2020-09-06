@@ -18,18 +18,24 @@ function getCurrentLocation() {
 }
 
 function locationRetrieved(position) {
-    currentLocationElement.innerHTML = `Lat: <span id="latitude">${position.coords.latitude}</span>, Lon: <span id="longitude">${position.coords.longitude}</span>`; 
+    //currentLocationElement.innerHTML = `Lat: <span id="latitude">${position.coords.latitude}</span>, Lon: <span id="longitude">${position.coords.longitude}</span>`; 
+
+    //Clear the loading message.
+    currentLocationElement.innerHTML = ""; 
 
     var getLocalWeatherButton = document.createElement("button"); 
     getLocalWeatherButton.setAttribute("type","button");
+    getLocalWeatherButton.classList.add("btn","btn-primary","btn-sm"); 
     getLocalWeatherButton.setAttribute("id","get-local-weather-button"); 
     getLocalWeatherButton.innerHTML = `Get Local Weather`;  
     currentLocationElement.appendChild(getLocalWeatherButton); 
 
    
 
-    currentLatitude = document.querySelector("#latitude").innerText; 
-    currentLongitude = document.querySelector("#longitude").innerText;
+    //currentLatitude = document.querySelector("#latitude").innerText; 
+    currentLatitude = position.coords.latitude; 
+    //currentLongitude = document.querySelector("#longitude").innerText;
+    currentLongitude = position.coords.longitude; 
     console.log(currentLatitude); 
     console.log(currentLongitude); 
 
