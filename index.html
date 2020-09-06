@@ -29,8 +29,22 @@
         
         <div id="header-background" class="dark-background">
             <div id="temp-toggle" class="input-group pt-3 pl-3">
-                <input type="checkbox" checked data-toggle="toggle" data-on="°C→" data-off="←°F" data-size="small" data-onstyle="info" data-offstyle="info">
+                <input type="checkbox" checked data-toggle="toggle" data-on="°C→" data-off="←°F" data-size="small" data-onstyle="secondary" data-offstyle="secondary">
             </div>
+
+            <div id="alert-container" class="container"></div>
+
+            <div class="container">
+                <div class="input-group mt-3">
+                    <input type="text" id="user-input" class="form-control" placeholder="Search Location" aria-label="Search Location" aria-describedby="search-button">
+                    <div class="input-group-append">
+                        <button id="search-button" class="btn btn-info" type="button">Search</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="get-local"></div>
+            
             <h1>Weather Dashboard</h1>
             <div id="current-location">
             </div>

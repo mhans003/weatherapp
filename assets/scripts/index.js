@@ -8,12 +8,15 @@ var fahrenheit = true;
 //HTML element variables.
 var currentLocationElement = document.querySelector("#current-location"); 
 var tempToggle = document.querySelector("#temp-toggle"); 
-
+var searchButton = document.querySelector("#search-button"); 
+var searchInput = document.querySelector("#user-input"); 
+var alertContainer = document.querySelector("#alert-container"); 
+var getLocalDiv = document.querySelector("#get-local"); 
 
 
 
 //Set initial content of the current location element (#current-location) to waiting message. 
-currentLocationElement.innerHTML = "Retrieving Local Coordinates..."; 
+getLocalDiv.innerHTML = "Retrieving Local Coordinates..."; 
 
 //Determine where the user is located. This may take a few seconds to change content of #current-location element.
 getCurrentLocation(); 
@@ -27,15 +30,19 @@ function getCurrentLocation() {
 function locationRetrieved(position) {
     //currentLocationElement.innerHTML = `Lat: <span id="latitude">${position.coords.latitude}</span>, Lon: <span id="longitude">${position.coords.longitude}</span>`; 
 
-    //Clear the loading message.
+    //Clear the current location element. 
     currentLocationElement.innerHTML = ""; 
 
     var getLocalWeatherButton = document.createElement("button"); 
     getLocalWeatherButton.setAttribute("type","button");
-    getLocalWeatherButton.classList.add("btn","btn-info","btn-sm"); 
+    getLocalWeatherButton.classList.add("btn","btn-info","btn-sm","mt-2"); 
     getLocalWeatherButton.setAttribute("id","get-local-weather-button"); 
     getLocalWeatherButton.innerHTML = `Get Local Weather`;  
-    currentLocationElement.appendChild(getLocalWeatherButton); 
+
+    //Clear the loading message and replace with the get local weather button.
+    getLocalDiv.innerHTML = ""; 
+    getLocalDiv.appendChild(getLocalWeatherButton); 
+    //currentLocationElement.appendChild(getLocalWeatherButton); 
 
    
 
@@ -62,8 +69,10 @@ function constructQueryString() {
     if(event.target.id === "get-local-weather-button") {
         //If the button pressed was to get local weather data, use latitude and longitude that came from the navigator object in the window.
         queryString += `lat=${currentLatitude}&lon=${currentLongitude}`; 
-    } else {
-        //PUT LOGIC IN HERE IF CONTENT IS COMING FROM SEARCH BAR(MODIFY QUERY)
+    } else if(event.target.id === "search-button") {
+        console.log("search button clicked"); 
+        console.log(searchInput.value); 
+        queryString += `q=${searchInput.value}`; 
     }
 
     //Add the api key to the end of the query string. 
@@ -78,7 +87,16 @@ function constructQueryString() {
 function retrieveWeatherData(query, APIKey) {
     //Using the passed in query string, search the weather api for a response. Extract the response using .json, then read the results. 
     fetch(query)
-    .then(response => response.json())
+    .then(response => {
+        //If there is no found location, throw an error. 
+        if(!response.ok) {
+            throw new Error("Failed to find a location."); 
+        }
+
+        //Clear any error text and move on to next block if successful. 
+        alertContainer.innerHTML = ""; 
+        return response.json(); 
+    })
     .then(weatherData => {
 
         //console.log(Date.now() - 86400000); 
@@ -105,6 +123,12 @@ function retrieveWeatherData(query, APIKey) {
         styleHeader(weatherData); 
         displayCurrentWeather(weatherData); 
         */
+    })
+    .catch(error => {
+        //alert.classList.add("d-block");
+        renderAlert(); 
+          
+        console.error(error); 
     }); 
     
 }
@@ -250,8 +274,33 @@ function toggleTemperature() {
     
 }
 
+function renderAlert() {
+
+    //Clear the alert container in case there is already an alert. 
+    alertContainer.innerHTML = ""; 
+
+    var alertDiv = document.createElement("div"); 
+    alertDiv.classList.add("alert","alert-danger","alert-dismissible","fade","show","mt-3");
+    alertDiv.setAttribute("role","alert"); 
+    alertDiv.innerText = "Error. Enter another location."; 
+
+    var alertButton = document.createElement("button"); 
+    alertButton.setAttribute("type","button"); 
+    alertButton.classList.add("close"); 
+    alertButton.setAttribute("data-dismiss","alert"); 
+
+    var alertSpan = document.createElement("span"); 
+    alertSpan.setAttribute("aria-hidden","true");
+    alertSpan.innerHTML = "&times;"; 
+    
+    alertButton.appendChild(alertSpan); 
+    alertDiv.appendChild(alertButton); 
+    alertContainer.appendChild(alertDiv); 
+}
+
 //EVENTS
 
 tempToggle.addEventListener("click", toggleTemperature); 
+searchButton.addEventListener("click", constructQueryString); 
 
 
