@@ -72,19 +72,39 @@ function constructQueryString() {
     console.log(queryString); 
 
     //Using the constructed query string, retrieve the weather data 
-    retrieveWeatherData(queryString); 
+    retrieveWeatherData(queryString, APIKey); 
 }
 
-function retrieveWeatherData(query) {
+function retrieveWeatherData(query, APIKey) {
     //Using the passed in query string, search the weather api for a response. Extract the response using .json, then read the results. 
     fetch(query)
     .then(response => response.json())
     .then(weatherData => {
+
+        //console.log(Date.now() - 86400000); 
+        //console.log(Date.now()); 
+        //Call for UV data 
+        fetch(`http://api.openweathermap.org/data/2.5/uvi/forecast?appid=${APIKey}&lat=${weatherData.coord.lat}&lon=${weatherData.coord.lon}&cnt=1`)
+        //fetch(`http://api.openweathermap.org/data/2.5/uvi/history?appid=${APIKey}&lat=${weatherData.coord.lat}&lon=${weatherData.coord.lon}&cnt=5&start=${Date.now() - 86400000}&end=${Date.now()}`)
+        .then(uvResponse => uvResponse.json())
+        .then(uvData => {
+
+            //console.log(weatherData);
+            //console.log(uvData); 
+            //console.log("something else");
+            //Style the header depending on the weather data.  
+            styleHeader(weatherData); 
+            displayCurrentWeather(weatherData,uvData); 
+
+        }); 
+
+        /*
         console.log(weatherData);
         console.log("something else");
         //Style the header depending on the weather data.  
         styleHeader(weatherData); 
         displayCurrentWeather(weatherData); 
+        */
     }); 
     
 }
@@ -103,7 +123,10 @@ function styleHeader(data) {
     //Style depending on 
 }
 
-function displayCurrentWeather(data) {
+function displayCurrentWeather(data, uvdata) {
+
+    console.log("WEATHER DATA:",data); 
+    console.log("UV DATA:",uvdata); 
 
     //Clear the current weather data.
     currentLocationElement.innerHTML = ""; 
@@ -115,6 +138,23 @@ function displayCurrentWeather(data) {
 
     //Add the location to the screen. 
     currentLocationElement.appendChild(locationOutput); 
+
+    //Display the current date. 
+    var currentDate = moment().format("dddd, MMMM Do YYYY"); 
+    var dateOutput = document.createElement("div"); 
+    dateOutput.classList.add("other-info"); 
+    dateOutput.innerText = currentDate; 
+
+    //Add the current date to the screen.
+    currentLocationElement.appendChild(dateOutput); 
+
+    //Display the description. 
+    var descriptionOutput = document.createElement("div"); 
+    descriptionOutput.classList.add("main-description"); 
+    descriptionOutput.innerText = `- ${data.weather[0].description} -`; 
+
+    //Add the description to the screen.
+    currentLocationElement.appendChild(descriptionOutput); 
 
     //Display current temperature. 
     var tempOutput = document.createElement("div"); 
@@ -130,6 +170,50 @@ function displayCurrentWeather(data) {
     
     //Add the temperature to the screen.
     currentLocationElement.appendChild(tempOutput); 
+
+    //Display the current icon. 
+    var iconDiv = document.createElement("div"); 
+    var iconImage = document.createElement("img"); 
+    iconImage.setAttribute("src", `http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`); 
+    iconDiv.appendChild(iconImage); 
+
+    //Add the icon to the screen. 
+    currentLocationElement.appendChild(iconDiv); 
+
+    //Display the humidity. 
+    var humidityOutput = document.createElement("div"); 
+    humidityOutput.classList.add("other-info"); 
+    humidityOutput.innerText = `Humidity: ${data.main.humidity}%`; 
+
+    //Add the humidity to the screen.
+    currentLocationElement.appendChild(humidityOutput); 
+
+    //Display the wind speed. 
+    var windOutput = document.createElement("div"); 
+    windOutput.classList.add("other-info"); 
+    windOutput.innerText = `Wind Speed: ${Number(data.wind.speed * 2.237).toFixed(1)} MPH`; 
+
+    //Add the wind speed to the screen.
+    currentLocationElement.appendChild(windOutput); 
+
+    //Display the UV Index. 
+    var uvOutput = document.createElement("div"); 
+    uvOutput.classList.add("other-info"); 
+    //Access the UV index and determine safety range. 
+    var uvIndex = Math.round(uvdata[0].value); 
+    uvOutput.innerText = `UV Index: ${uvIndex}`; 
+    if(uvIndex >= 8) {
+        uvOutput.innerHTML += `<span class="text-danger"><i class="uv-index"> (Very High)</i></span>`; 
+    } else if(uvIndex >= 6) {
+        uvOutput.innerHTML += `<span class="text-caution"><i class="uv-index"> (High)</i></span>`;
+    } else if(uvIndex >= 3) {
+        uvOutput.innerHTML += `<span class="text-warning"><i class="uv-index"> (Moderate)</i></span>`;
+    } else {
+        uvOutput.innerHTML += `<span class="text-success"><i class="uv-index"> (Low)</i></span>`;
+    }
+
+    //Add the UV Index to the screen.
+    currentLocationElement.appendChild(uvOutput); 
 }
 
 function kToFahrenheit(kelvin) {
