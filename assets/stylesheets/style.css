@@ -69,6 +69,11 @@ h1 {
 
 #forecasts {
     text-align: center; 
+    margin-top: 15px;  
+}
+
+.card {
+    width: 200px; 
 }
 
 /*Media Queries*/

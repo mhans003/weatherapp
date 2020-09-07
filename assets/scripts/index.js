@@ -228,7 +228,7 @@ function displayForecast(data) {
 
         //Main card. 
         var forecastCard = document.createElement("div"); 
-        forecastCard.classList.add("card"); 
+        forecastCard.classList.add("card","mx-auto","mb-3"); 
 
         //Card header for date. 
         var forecastCardHeader = document.createElement("div"); 
