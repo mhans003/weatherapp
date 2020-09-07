@@ -92,11 +92,17 @@ function retrieveWeatherData(query, APIKey) {
         fetch(`https://api.openweathermap.org/data/2.5/uvi/forecast?appid=${APIKey}&lat=${weatherData.coord.lat}&lon=${weatherData.coord.lon}&cnt=1`)
         .then(uvResponse => uvResponse.json())
         .then(uvData => {
-            //Style the header depending on the weather data.  
-            styleHeader(weatherData); 
 
-            //Display the current weather by passing in the data set and the uv data set. 
-            displayCurrentWeather(weatherData,uvData); 
+            //Fetch the 5-day forecast. 
+            fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${weatherData.coord.lat}&lon=${weatherData.coord.lon}&appid=${APIKey}`)
+            .then(forecastResponse => forecastResponse.json())
+            .then(forecastData => {
+                //Style the header depending on the weather data.  
+                styleHeader(weatherData); 
+
+                //Display the current weather by passing in the main data set, the uv data set, and the forecast data set. 
+                displayCurrentWeather(weatherData,uvData, forecastData); 
+            }); 
         }); 
     })
     .catch(error => {
@@ -111,7 +117,9 @@ function styleHeader(data) {
     document.querySelector("header").style.backgroundImage = `url('https://source.unsplash.com/1600x900/?,${data.weather[0].description},sky,${data.name}')`; 
 }
 
-function displayCurrentWeather(data, uvdata) {
+function displayCurrentWeather(data, uvdata, forecastData) {
+
+    console.log(data,uvdata,forecastData); 
 
     //Clear the current weather data.
     currentLocationElement.innerHTML = ""; 
