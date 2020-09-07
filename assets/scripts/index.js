@@ -5,6 +5,9 @@ var currentLongitude;
 //By default, set Fahrenheit to true; 
 var fahrenheit = true; 
 
+//Set the number of desired forecasts to be displayed. 
+var numForecasts = 5; 
+
 //HTML element variables.
 var currentLocationElement = document.querySelector("#current-location"); 
 var tempToggle = document.querySelector("#temp-toggle"); 
@@ -12,7 +15,7 @@ var searchButton = document.querySelector("#search-button");
 var searchInput = document.querySelector("#user-input"); 
 var alertContainer = document.querySelector("#alert-container"); 
 var getLocalDiv = document.querySelector("#get-local"); 
-
+var forecasts = document.querySelector("#forecasts"); 
 
 
 //Set initial content of the current location element (#current-location) to waiting message. 
@@ -101,7 +104,10 @@ function retrieveWeatherData(query, APIKey) {
                 styleHeader(weatherData); 
 
                 //Display the current weather by passing in the main data set, the uv data set, and the forecast data set. 
-                displayCurrentWeather(weatherData,uvData, forecastData); 
+                displayCurrentWeather(weatherData,uvData); 
+
+                //Display the weather forecast for the next 5 days. 
+                displayForecast(forecastData); 
             }); 
         }); 
     })
@@ -117,9 +123,9 @@ function styleHeader(data) {
     document.querySelector("header").style.backgroundImage = `url('https://source.unsplash.com/1600x900/?,${data.weather[0].description},sky,${data.name}')`; 
 }
 
-function displayCurrentWeather(data, uvdata, forecastData) {
+function displayCurrentWeather(data, uvdata) {
 
-    console.log(data,uvdata,forecastData); 
+    console.log(data,uvdata); 
 
     //Clear the current weather data.
     currentLocationElement.innerHTML = ""; 
@@ -208,6 +214,68 @@ function displayCurrentWeather(data, uvdata, forecastData) {
     //Add the UV Index to the screen.
     currentLocationElement.appendChild(uvOutput); 
 }
+
+function displayForecast(data) {
+
+    console.log(data); 
+    //Clear the forecast section.
+    forecasts.innerHTML = ""; 
+
+    //Loop through each of the 5 forecasts over 24 hour increments, since the api returns data for every 3 hours. 
+    for(var thisForecast = 0; thisForecast < (numForecasts * 8); thisForecast += 8) {
+
+        console.log(data.list[thisForecast]); 
+
+        //Main card. 
+        var forecastCard = document.createElement("div"); 
+        forecastCard.classList.add("card"); 
+
+        //Card header for date. 
+        var forecastCardHeader = document.createElement("div"); 
+        forecastCardHeader.classList.add("card-header"); 
+        forecastCardHeader.innerText = String(data.list[thisForecast].dt_txt).slice(0,10);
+
+        //Temperature output.
+        var forecastTemp = document.createElement("h1"); 
+        forecastTemp.classList.add("card-title"); 
+
+        if(fahrenheit) {
+            //If the user is currently selecting F, convert K to F. 
+            forecastTemp.innerHTML = `<span class="temp">${kToFahrenheit(data.list[thisForecast].main.temp)}</span>&#176;`; 
+        } else {
+            //If the user is currently selecting C, convert K to C. 
+            forecastTemp.innerHTML = `<span class="temp">${kToCelcius(data.list[thisForecast].main.temp)}</span>&#176;`; 
+        }
+
+        //Icon
+        var forecastIcon = document.createElement("img"); 
+        forecastIcon.setAttribute("src",`http://openweathermap.org/img/wn/${data.list[thisForecast].weather[0].icon}@2x.png`);
+        forecastIcon.style.width = "100%"; 
+        
+        //Card body
+        var forecastCardBody = document.createElement("div"); 
+        forecastCardBody.classList.add("card-body"); 
+
+        //Description of weather for card body. 
+        var forecastDescription = document.createElement("h5"); 
+        forecastDescription.classList.add("card-text"); 
+        forecastDescription.innerText = data.list[thisForecast].weather[0].description; 
+
+        //Humidity for card body. 
+        var forecastHumidity = document.createElement("p"); 
+        forecastHumidity.classList.add("card-text"); 
+        forecastHumidity.innerText = `Humidity: ${data.list[thisForecast].main.humidity}%`; 
+
+        //Append items. 
+        forecastCardBody.appendChild(forecastDescription); 
+        forecastCardBody.appendChild(forecastHumidity); 
+        forecastCard.appendChild(forecastCardHeader); 
+        forecastCard.appendChild(forecastTemp); 
+        forecastCard.appendChild(forecastIcon); 
+        forecastCard.appendChild(forecastCardBody); 
+        forecasts.appendChild(forecastCard); 
+    }
+} 
 
 function kToFahrenheit(kelvin) {
     return Math.round((kelvin - 273.15) * (9 / 5) + 32); 
