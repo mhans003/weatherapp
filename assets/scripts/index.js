@@ -100,6 +100,10 @@ function retrieveWeatherData(query, APIKey) {
             fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${weatherData.coord.lat}&lon=${weatherData.coord.lon}&appid=${APIKey}`)
             .then(forecastResponse => forecastResponse.json())
             .then(forecastData => {
+
+                //Save the current search to search history.
+                saveSearch(searchInput.value); 
+
                 //Style the header depending on the weather data.  
                 styleHeader(weatherData); 
 
@@ -116,6 +120,64 @@ function retrieveWeatherData(query, APIKey) {
         renderAlert(); 
     }); 
     
+}
+
+function saveSearch(search) {
+    //Create unique key for this search. 
+    var searchKey = `WeatherAppSearchId(${moment().valueOf()})`;
+
+    //This will be set to true if we find an instance of this location name already searched.
+    var containsSearch = false; 
+
+    //Look at each item in local storage. 
+    for(var i in localStorage) {
+        //Save this current saved search. 
+        var thisSearch = String(i); 
+        console.log(localStorage.getItem(thisSearch)); 
+
+        console.log("storage item: " + localStorage.getItem(thisSearch)); 
+        console.log("search input: " + search); 
+        console.log(`"${search}"` === localStorage.getItem(thisSearch)); 
+
+        //If the user's search input matches the current saved item, we know it is already in the search history and can stop looking.
+        if(`"${search}"` === localStorage.getItem(thisSearch)) {
+            console.log("matches"); 
+            containsSearch = true; 
+            break; 
+        }
+    }
+
+    //If the search term is not already saved, save it into the history. 
+    if(!containsSearch) {
+        //Save the search to local storage. 
+        localStorage.setItem(searchKey, JSON.stringify(search)); 
+        console.log("saved to storage"); 
+    } 
+
+    /*
+    for(var i in localStorage) {
+        var thisSearch = String(i);  
+        //console.log("thisSearch: " + thisSearch); 
+
+        if(thisSearch.indexOf("WeatherAppSearchId") !== -1) {
+            //console.log(thisSearch); 
+            //console.log(localStorage.getItem(thisSearch)); 
+
+            if(localStorage.getItem(thisSearch)) {
+                console.log("contains item"); 
+            } else {
+                console.log("doesn't contain item"); 
+            }
+        }
+        
+        if(!containsSearch) {
+            //Save the search to local storage. 
+            localStorage.setItem(searchKey, JSON.stringify(search)); 
+        }
+        
+    }
+    */
+
 }
 
 function styleHeader(data) {
