@@ -28,6 +28,8 @@ var storedSearches = [];
 //Load the searched terms from local storage. 
 getStoredSearches();
 
+console.log(storedSearches); 
+
 //Determine where the user is located. This may take a few seconds to change content of #current-location element.
 getCurrentLocation(); 
 
@@ -38,10 +40,11 @@ function getStoredSearches() {
     //Go through each item in local stroage. 
     for(var i in localStorage) {
         var thisItem = String(i); 
-
+        //console.log(thisItem); 
+        
         //If not null or undefined, store in an array. 
-        if(localStorage.getItem(thisItem)) {
-            console.log(JSON.parse(localStorage.getItem(thisItem))); 
+        if(localStorage.getItem(thisItem) && thisItem.includes("WeatherAppSearchId")) {
+            //console.log(JSON.parse(localStorage.getItem(thisItem))); 
             storedSearches.push(JSON.parse(localStorage.getItem(thisItem))); 
         }
     }
