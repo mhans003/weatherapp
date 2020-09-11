@@ -21,9 +21,31 @@ var forecasts = document.querySelector("#forecasts");
 //Set initial content of the current location element (#current-location) to waiting message. 
 getLocalDiv.innerHTML = "Retrieving Local Coordinates..."; 
 
+//Load the searched terms from local storage. 
+var storedSearches = getStoredSearches();
+
 //Determine where the user is located. This may take a few seconds to change content of #current-location element.
 getCurrentLocation(); 
 
+function getStoredSearches() {
+    //Store retrieved searches.
+    var searches = [];
+
+    //Go through each item in local stroage. 
+    for(var i in localStorage) {
+        var thisItem = String(i); 
+
+        //If not null or undefined, store in an array. 
+        if(localStorage.getItem(thisItem)) {
+            console.log(JSON.parse(localStorage.getItem(thisItem))); 
+            searches.push(JSON.parse(localStorage.getItem(thisItem))); 
+        }
+    }
+
+    //Return the retrieved searches
+    return searches; 
+    
+}
 
 function getCurrentLocation() {
     //Using the navigator object, pass callback function required for getCurrentPosition method.
@@ -133,11 +155,15 @@ function saveSearch(search) {
     for(var i in localStorage) {
         //Save this current saved search. 
         var thisSearch = String(i); 
-        console.log(localStorage.getItem(thisSearch)); 
+        
+        if(localStorage.getItem(thisSearch)) {
+            console.log(localStorage.getItem(thisSearch)); 
+        }
+        
 
-        console.log("storage item: " + localStorage.getItem(thisSearch)); 
-        console.log("search input: " + search); 
-        console.log(`"${search}"` === localStorage.getItem(thisSearch)); 
+        //console.log("storage item: " + localStorage.getItem(thisSearch)); 
+        //console.log("search input: " + search); 
+        //console.log(`"${search}"` === localStorage.getItem(thisSearch)); 
 
         //If the user's search input matches the current saved item, we know it is already in the search history and can stop looking.
         if(`"${search}"` === localStorage.getItem(thisSearch)) {
@@ -154,29 +180,8 @@ function saveSearch(search) {
         console.log("saved to storage"); 
     } 
 
-    /*
-    for(var i in localStorage) {
-        var thisSearch = String(i);  
-        //console.log("thisSearch: " + thisSearch); 
-
-        if(thisSearch.indexOf("WeatherAppSearchId") !== -1) {
-            //console.log(thisSearch); 
-            //console.log(localStorage.getItem(thisSearch)); 
-
-            if(localStorage.getItem(thisSearch)) {
-                console.log("contains item"); 
-            } else {
-                console.log("doesn't contain item"); 
-            }
-        }
-        
-        if(!containsSearch) {
-            //Save the search to local storage. 
-            localStorage.setItem(searchKey, JSON.stringify(search)); 
-        }
-        
-    }
-    */
+    //Refill the storedSearches array with the updated search items. 
+    storedSearches = getStoredSearches();
 
 }
 
@@ -187,7 +192,7 @@ function styleHeader(data) {
 
 function displayCurrentWeather(data, uvdata) {
 
-    console.log(data,uvdata); 
+    //console.log(data,uvdata); 
 
     //Clear the current weather data.
     currentLocationElement.innerHTML = ""; 
@@ -279,14 +284,14 @@ function displayCurrentWeather(data, uvdata) {
 
 function displayForecast(data) {
 
-    console.log(data); 
+    //console.log(data); 
     //Clear the forecast section.
     forecasts.innerHTML = ""; 
 
     //Loop through each of the 5 forecasts over 24 hour increments, since the api returns data for every 3 hours. 
     for(var thisForecast = 0; thisForecast < (numForecasts * 8); thisForecast += 8) {
 
-        console.log(data.list[thisForecast]); 
+        //console.log(data.list[thisForecast]); 
 
         //Main card. 
         var forecastCard = document.createElement("div"); 
@@ -356,7 +361,7 @@ function toggleTemperature() {
     elements.forEach((element) => {
         //Access this particular element's inner temperature measurement. 
         var temp = Number(element.innerText); 
-        console.log(temp); 
+        //console.log(temp); 
         //Convert
         if(fahrenheit) {
             element.innerText = Math.round((temp - 32) * (5 / 9)); 
