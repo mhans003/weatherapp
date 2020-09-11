@@ -62,6 +62,9 @@ function dispalyStoredSearches() {
 
     //Display other searches in the dropdown. 
     for(var i = 0; i < storedSearches.length; i++) {
+        //If this is the most recent search, don't repeat it in the list.
+        if(storedSearches[i] === mostRecent.innerText) continue; 
+        //Create an a element for each item in the dropdown from the local storage list.
         var thisSearch = document.createElement("a"); 
         thisSearch.classList.add("dropdown-item"); 
         thisSearch.setAttribute("href","#"); 
