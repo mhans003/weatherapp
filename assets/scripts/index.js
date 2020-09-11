@@ -166,7 +166,7 @@ function retrieveWeatherData(query, APIKey) {
                 styleHeader(weatherData); 
 
                 //Display the current weather by passing in the main data set, the uv data set, and the forecast data set. 
-                displayCurrentWeather(weatherData,uvData); 
+                displayCurrentWeather(weatherData, uvData); 
 
                 //Display the weather forecast for the next 5 days. 
                 displayForecast(forecastData); 
@@ -341,7 +341,7 @@ function displayForecast(data) {
         //Card header for date. 
         var forecastCardHeader = document.createElement("div"); 
         forecastCardHeader.classList.add("card-header","bg-info","text-light"); 
-        forecastCardHeader.innerText = String(data.list[thisForecast].dt_txt).slice(0,10);
+        forecastCardHeader.innerText = formatDate(String(data.list[thisForecast].dt_txt).slice(0,10));
 
         //Temperature output.
         var forecastTemp = document.createElement("h1"); 
@@ -391,6 +391,15 @@ function kToFahrenheit(kelvin) {
 
 function kToCelcius(kelvin) {
     return Math.round(kelvin - 273.15); 
+}
+
+function formatDate(date) { 
+    //Formats date returned from API into MM/DD/YYYY format. 
+    var year = date.slice(0,4); 
+    var month = date.slice(5,7);  
+    var day = date.slice(8,10); 
+   
+    return `${month}/${day}/${year}`; 
 }
 
 function toggleTemperature() {
