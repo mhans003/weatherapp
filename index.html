@@ -36,13 +36,24 @@
 
             <!--Div for alert to be filled if the api request returns an error.-->
             <div id="alert-container" class="container"></div>
-
+        
             <!--Search field for finding a city's weather-->
             <div class="container">
                 <div class="input-group mt-3">
-                    <input type="text" id="user-input" class="form-control" placeholder="Search Location" aria-label="Search Location" aria-describedby="search-button">
+                    <input type="text" id="user-input" class="form-control" placeholder="Search Location" aria-label="Search Location" aria-describedby="search-button">  
                     <div class="input-group-append">
                         <button id="search-button" class="btn btn-info" type="button">Search</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!--Button for recent searches dropdown-->
+            <div class="btn-group mt-2">
+                <button id="recent-button" type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Recent</button>
+                <div class="dropdown-menu">
+                    <a id="most-recent" class="dropdown-item" href="#"></a>
+                    <div class="dropdown-divider"></div>
+                    <div id="added-searches">
                     </div>
                 </div>
             </div>

@@ -16,20 +16,24 @@ var searchInput = document.querySelector("#user-input");
 var alertContainer = document.querySelector("#alert-container"); 
 var getLocalDiv = document.querySelector("#get-local"); 
 var forecasts = document.querySelector("#forecasts"); 
-
+var mostRecent = document.querySelector("#most-recent"); 
+var addedSearches = document.querySelector("#added-searches"); 
 
 //Set initial content of the current location element (#current-location) to waiting message. 
 getLocalDiv.innerHTML = "Retrieving Local Coordinates..."; 
 
+//Create array to store the stored searches. 
+var storedSearches = []; 
+
 //Load the searched terms from local storage. 
-var storedSearches = getStoredSearches();
+getStoredSearches();
 
 //Determine where the user is located. This may take a few seconds to change content of #current-location element.
 getCurrentLocation(); 
 
 function getStoredSearches() {
-    //Store retrieved searches.
-    var searches = [];
+    //Clear the current stored searches.
+    storedSearches = [];
 
     //Go through each item in local stroage. 
     for(var i in localStorage) {
@@ -38,12 +42,41 @@ function getStoredSearches() {
         //If not null or undefined, store in an array. 
         if(localStorage.getItem(thisItem)) {
             console.log(JSON.parse(localStorage.getItem(thisItem))); 
-            searches.push(JSON.parse(localStorage.getItem(thisItem))); 
+            storedSearches.push(JSON.parse(localStorage.getItem(thisItem))); 
         }
     }
 
-    //Return the retrieved searches
-    return searches; 
+    //Display the stored searches in HTML.
+    dispalyStoredSearches(); 
+    
+}
+
+function dispalyStoredSearches() {
+    //Create an element for each of the retrieved searches.
+
+    //Display the most recent search.
+    mostRecent.innerText = JSON.parse(localStorage.getItem("WeatherAppSearchMostRecent")); 
+
+    //Clear the current items from the added searches. 
+    addedSearches.innerHTML = ""; 
+
+    //Display other searches in the dropdown. 
+    for(var i = 0; i < storedSearches.length; i++) {
+        var thisSearch = document.createElement("a"); 
+        thisSearch.classList.add("dropdown-item"); 
+        thisSearch.setAttribute("href","#"); 
+        thisSearch.innerText = storedSearches[i]; 
+        addedSearches.appendChild(thisSearch); 
+    }
+
+    //When a user clicks a drop-down item, fill it into the search bar. 
+    var dropDownItems = document.querySelectorAll(".dropdown-item"); 
+    dropDownItems.forEach((dropDown) => {
+        dropDown.addEventListener("click", function(event) {
+            console.log(event.target.innerText); 
+            searchInput.value = event.target.innerText; 
+        }); 
+    }); 
     
 }
 
@@ -145,6 +178,7 @@ function retrieveWeatherData(query, APIKey) {
 }
 
 function saveSearch(search) {
+
     //Create unique key for this search. 
     var searchKey = `WeatherAppSearchId(${moment().valueOf()})`;
 
@@ -179,6 +213,10 @@ function saveSearch(search) {
         localStorage.setItem(searchKey, JSON.stringify(search)); 
         console.log("saved to storage"); 
     } 
+
+    //Save this as the most recent search. 
+    var recentKey = `WeatherAppSearchMostRecent`; 
+    localStorage.setItem(recentKey, JSON.stringify(search)); 
 
     //Refill the storedSearches array with the updated search items. 
     storedSearches = getStoredSearches();
@@ -406,5 +444,6 @@ function renderAlert() {
 
 tempToggle.addEventListener("click", toggleTemperature); 
 searchButton.addEventListener("click", constructQueryString); 
+
 
 
