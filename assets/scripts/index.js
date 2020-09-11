@@ -340,7 +340,7 @@ function displayForecast(data) {
 
         //Card header for date. 
         var forecastCardHeader = document.createElement("div"); 
-        forecastCardHeader.classList.add("card-header"); 
+        forecastCardHeader.classList.add("card-header","bg-info","text-light"); 
         forecastCardHeader.innerText = String(data.list[thisForecast].dt_txt).slice(0,10);
 
         //Temperature output.

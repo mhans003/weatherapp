@@ -37,6 +37,10 @@ h1 {
     display: none; 
 }
 
+#search-input {
+    max-width: 500px; 
+}
+
 /*Main Heading Weather Data Outputs*/
 
 .main-location {
@@ -75,6 +79,8 @@ h1 {
 .card {
     width: 200px; 
 }
+
+
 
 /*Media Queries*/
 
