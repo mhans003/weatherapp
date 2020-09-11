@@ -28,8 +28,6 @@ var storedSearches = [];
 //Load the searched terms from local storage. 
 getStoredSearches();
 
-console.log(storedSearches); 
-
 //Determine where the user is located. This may take a few seconds to change content of #current-location element.
 getCurrentLocation(); 
 
@@ -44,14 +42,12 @@ function getStoredSearches() {
         
         //If not null or undefined, store in an array. 
         if(localStorage.getItem(thisItem) && thisItem.includes("WeatherAppSearchId")) {
-            //console.log(JSON.parse(localStorage.getItem(thisItem))); 
             storedSearches.push(JSON.parse(localStorage.getItem(thisItem))); 
         }
     }
 
     //Display the stored searches in HTML.
     dispalyStoredSearches(); 
-    
 }
 
 function dispalyStoredSearches() {
@@ -78,8 +74,7 @@ function dispalyStoredSearches() {
     //When a user clicks a drop-down item, fill it into the search bar. 
     var dropDownItems = document.querySelectorAll(".dropdown-item"); 
     dropDownItems.forEach((dropDown) => {
-        dropDown.addEventListener("click", function(event) {
-            console.log(event.target.innerText); 
+        dropDown.addEventListener("click", function(event) { 
             searchInput.value = event.target.innerText; 
         }); 
     }); 
@@ -92,7 +87,7 @@ function getCurrentLocation() {
 }
 
 function locationRetrieved(position) {
-    //currentLocationElement.innerHTML = `Lat: <span id="latitude">${position.coords.latitude}</span>, Lon: <span id="longitude">${position.coords.longitude}</span>`; 
+    //Callback function for getCurrentPosition. To be executed when the local coordinates are available. 
 
     //Clear the current location element. 
     currentLocationElement.innerHTML = ""; 
@@ -156,12 +151,10 @@ function retrieveWeatherData(query, APIKey) {
         fetch(`https://api.openweathermap.org/data/2.5/uvi/forecast?appid=${APIKey}&lat=${weatherData.coord.lat}&lon=${weatherData.coord.lon}&cnt=1`)
         .then(uvResponse => uvResponse.json())
         .then(uvData => {
-
             //Fetch the 5-day forecast. 
             fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${weatherData.coord.lat}&lon=${weatherData.coord.lon}&appid=${APIKey}`)
             .then(forecastResponse => forecastResponse.json())
             .then(forecastData => {
-
                 //Save the current search to search history.
                 saveSearch(searchInput.value); 
 
@@ -195,19 +188,9 @@ function saveSearch(search) {
     for(var i in localStorage) {
         //Save this current saved search. 
         var thisSearch = String(i); 
-        
-        if(localStorage.getItem(thisSearch)) {
-            console.log(localStorage.getItem(thisSearch)); 
-        }
-        
-
-        //console.log("storage item: " + localStorage.getItem(thisSearch)); 
-        //console.log("search input: " + search); 
-        //console.log(`"${search}"` === localStorage.getItem(thisSearch)); 
 
         //If the user's search input matches the current saved item, we know it is already in the search history and can stop looking.
         if(`"${search}"` === localStorage.getItem(thisSearch)) {
-            console.log("matches"); 
             containsSearch = true; 
             break; 
         }
@@ -217,7 +200,6 @@ function saveSearch(search) {
     if(!containsSearch) {
         //Save the search to local storage. 
         localStorage.setItem(searchKey, JSON.stringify(search)); 
-        console.log("saved to storage"); 
     } 
 
     //Save this as the most recent search. 
@@ -226,7 +208,6 @@ function saveSearch(search) {
 
     //Refill the storedSearches array with the updated search items. 
     storedSearches = getStoredSearches();
-
 }
 
 function styleHeader(data) {
@@ -235,9 +216,6 @@ function styleHeader(data) {
 }
 
 function displayCurrentWeather(data, uvdata) {
-
-    //console.log(data,uvdata); 
-
     //Clear the current weather data.
     currentLocationElement.innerHTML = ""; 
 
@@ -327,16 +305,11 @@ function displayCurrentWeather(data, uvdata) {
 }
 
 function displayForecast(data) {
-
-    //console.log(data); 
     //Clear the forecast section.
     forecasts.innerHTML = ""; 
 
     //Loop through each of the 5 forecasts over 24 hour increments, since the api returns data for every 3 hours. 
     for(var thisForecast = 0; thisForecast < (numForecasts * 8); thisForecast += 8) {
-
-        //console.log(data.list[thisForecast]); 
-
         //Main card. 
         var forecastCard = document.createElement("div"); 
         forecastCard.classList.add("card","mx-auto","mb-3"); 
@@ -388,6 +361,7 @@ function displayForecast(data) {
     }
 } 
 
+//Unit conversion functions
 function kToFahrenheit(kelvin) {
     return Math.round((kelvin - 273.15) * (9 / 5) + 32); 
 }
@@ -414,8 +388,7 @@ function toggleTemperature() {
     elements.forEach((element) => {
         //Access this particular element's inner temperature measurement. 
         var temp = Number(element.innerText); 
-        //console.log(temp); 
-        //Convert
+        //Convert between temperature units. 
         if(fahrenheit) {
             element.innerText = Math.round((temp - 32) * (5 / 9)); 
         } else {
