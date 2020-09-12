@@ -261,9 +261,10 @@ function displayCurrentWeather(data, uvdata) {
 
     //Display the current icon. 
     var iconDiv = document.createElement("div"); 
-    var iconImage = document.createElement("img"); 
-    iconImage.setAttribute("src", `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`); 
-    iconDiv.appendChild(iconImage); 
+    //var iconImage = document.createElement("img"); 
+    //iconImage.setAttribute("src", `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`); 
+    //iconDiv.appendChild(iconImage); 
+    iconDiv.innerHTML = icons[`${data.weather[0].icon}`]; 
 
     //Add the icon to the screen. 
     currentLocationElement.appendChild(iconDiv); 
@@ -332,9 +333,12 @@ function displayForecast(data) {
         }
 
         //Icon
-        var forecastIcon = document.createElement("img"); 
-        forecastIcon.setAttribute("src",`https://openweathermap.org/img/wn/${data.list[thisForecast].weather[0].icon}@2x.png`);
-        forecastIcon.style.width = "100%"; 
+        //var forecastIcon = document.createElement("img"); 
+        //forecastIcon.setAttribute("src",`https://openweathermap.org/img/wn/${data.list[thisForecast].weather[0].icon}@2x.png`);
+        //forecastIcon.style.width = "100%"; 
+        var forecastIcon = document.createElement("div"); 
+        console.log(data.list[thisForecast].weather[0].icon); 
+        forecastIcon.innerHTML = icons[`${data.list[thisForecast].weather[0].icon}`]; 
         
         //Card body
         var forecastCardBody = document.createElement("div"); 
