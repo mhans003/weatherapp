@@ -72,6 +72,14 @@ h1 {
     color: rgba(255,165,2,1.0); 
 }
 
+.is-hot {
+    color: rgba(255,107,107,1.0)
+}
+
+.is-cold {
+    color: rgba(24,220,255,1.0); 
+}
+
 /*Forecasts*/
 
 #forecasts {

@@ -256,6 +256,13 @@ function displayCurrentWeather(data, uvdata) {
         //If the user is currently selecting C, convert K to C. 
         tempOutput.innerHTML = `<span class="temp">${kToCelcius(data.main.temp)}</span>&#176;`; 
     }
+
+    //Check if hot or cold
+    if(kToFahrenheit(data.main.temp) >= 95) {
+        tempOutput.classList.add("is-hot"); 
+    } else if(kToFahrenheit(data.main.temp) <= 40) {
+        tempOutput.classList.add("is-cold"); 
+    }
     
     //Add the temperature to the screen.
     currentLocationElement.appendChild(tempOutput); 
@@ -328,6 +335,13 @@ function displayForecast(data) {
         } else {
             //If the user is currently selecting C, convert K to C. 
             forecastTemp.innerHTML = `<span class="temp">${kToCelcius(data.list[thisForecast].main.temp)}</span>&#176;`; 
+        }
+
+        //Check if hot or cold
+        if(kToFahrenheit(data.list[thisForecast].main.temp) >= 95) {
+            forecastTemp.classList.add("is-hot"); 
+        } else if(kToFahrenheit(data.list[thisForecast].main.temp) <= 40) {
+            forecastTemp.classList.add("is-cold"); 
         }
 
         //Icon
