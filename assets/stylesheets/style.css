@@ -44,6 +44,10 @@ h1 {
     max-width: 500px; 
 }
 
+.dropdown-menu {
+    overflow-y: 300px;
+}
+
 /*Main Heading Weather Data Outputs*/
 
 .main-location {

@@ -120,6 +120,8 @@ function constructQueryString() {
     var queryString = `https://api.openweathermap.org/data/2.5/weather?`; 
 
     if(event.target.id === "get-local-weather-button") {
+        //Empty the search field if there is any text.
+        searchInput.value = ""; 
         //If the button pressed was to get local weather data, use latitude and longitude that came from the navigator object in the window.
         queryString += `lat=${currentLatitude}&lon=${currentLongitude}`; 
     } else if(event.target.id === "search-button") {
@@ -198,14 +200,16 @@ function saveSearch(search) {
     }
 
     //If the search term is not already saved, save it into the history. 
-    if(!containsSearch) {
+    if(!containsSearch && search.length > 0) {
         //Save the search to local storage. 
         localStorage.setItem(searchKey, JSON.stringify(search)); 
     } 
 
-    //Save this as the most recent search. 
-    var recentKey = `WeatherAppSearchMostRecent`; 
-    localStorage.setItem(recentKey, JSON.stringify(search)); 
+    //Save this as the most recent search if it was typed in.
+    if(search.length > 0) {
+        var recentKey = `WeatherAppSearchMostRecent`; 
+        localStorage.setItem(recentKey, JSON.stringify(search)); 
+    }
 
     //Refill the storedSearches array with the updated search items. 
     storedSearches = getStoredSearches();
