@@ -45,7 +45,8 @@ h1 {
 }
 
 .dropdown-menu {
-    overflow-y: 300px;
+    height: 320px; 
+    overflow-y: scroll;
 }
 
 /*Main Heading Weather Data Outputs*/
