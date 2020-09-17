@@ -38,7 +38,6 @@ function getStoredSearches() {
     //Go through each item in local stroage. 
     for(var i in localStorage) {
         var thisItem = String(i); 
-        //console.log(thisItem); 
         
         //If not null or undefined, store in an array. 
         if(localStorage.getItem(thisItem) && thisItem.includes("WeatherAppSearchId")) {
@@ -75,7 +74,9 @@ function dispalyStoredSearches() {
     var dropDownItems = document.querySelectorAll(".dropdown-item"); 
     dropDownItems.forEach((dropDown) => {
         dropDown.addEventListener("click", function(event) { 
-            searchInput.value = event.target.innerText; 
+            //If a user clicks a drop down item, fill in the search field and construct the query string. 
+            searchInput.value = event.target.innerText;
+            constructQueryString(); 
         }); 
     }); 
     
@@ -112,7 +113,7 @@ function locationRetrieved(position) {
     getLocalWeatherButton.addEventListener("click", constructQueryString); 
 }
 
-function constructQueryString() {
+function constructQueryString() { 
     //This function will build a request string to be sent to the weather api. 
 
     //Initialize constant components of the query url. 
@@ -124,8 +125,8 @@ function constructQueryString() {
         searchInput.value = ""; 
         //If the button pressed was to get local weather data, use latitude and longitude that came from the navigator object in the window.
         queryString += `lat=${currentLatitude}&lon=${currentLongitude}`; 
-    } else if(event.target.id === "search-button") {
-        //If the button pressed was the search button, use the search terms. 
+    } else if(event.target.id === "search-button" || event.target.classList[0] === "dropdown-item") {
+        //If the button pressed was the search button or the user selected a dropdown item from recent search, use the search terms. 
         queryString += `q=${searchInput.value}`; 
     }
 
