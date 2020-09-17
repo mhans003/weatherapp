@@ -323,7 +323,7 @@ function displayForecast(data) {
     for(var thisForecast = 0; thisForecast < (numForecasts * 8); thisForecast += 8) {
         //Main card. 
         var forecastCard = document.createElement("div"); 
-        forecastCard.classList.add("card","mx-auto","mb-3"); 
+        forecastCard.classList.add("card","mx-auto","mx-xl-2","mb-3"); 
 
         //Card header for date. 
         var forecastCardHeader = document.createElement("div"); 
