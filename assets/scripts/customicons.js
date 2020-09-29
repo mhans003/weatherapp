@@ -1,4 +1,4 @@
-var icons = {
+const icons = {
     "01d": '<i class="fas fa-sun day"></i>',
     "01n": '<i class="fas fa-moon-stars night"></i>',
     "02d": '<i class="fas fa-sun-cloud day"></i>',
