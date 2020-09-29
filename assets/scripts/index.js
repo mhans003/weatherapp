@@ -1,29 +1,29 @@
 //Empty variables to hold the user's current latitude/longitude. 
-var currentLatitude; 
-var currentLongitude; 
+let currentLatitude; 
+let currentLongitude; 
 
 //By default, set Fahrenheit to true; 
-var fahrenheit = true; 
+let fahrenheit = true; 
 
 //Set the number of desired forecasts to be displayed. 
-var numForecasts = 5; 
+let numForecasts = 5; 
 
 //HTML element variables.
-var currentLocationElement = document.querySelector("#current-location"); 
-var tempToggle = document.querySelector("#temp-toggle"); 
-var searchButton = document.querySelector("#search-button"); 
-var searchInput = document.querySelector("#user-input"); 
-var alertContainer = document.querySelector("#alert-container"); 
-var getLocalDiv = document.querySelector("#get-local"); 
-var forecasts = document.querySelector("#forecasts"); 
-var mostRecent = document.querySelector("#most-recent"); 
-var addedSearches = document.querySelector("#added-searches"); 
+const currentLocationElement = document.querySelector("#current-location"); 
+const tempToggle = document.querySelector("#temp-toggle"); 
+const searchButton = document.querySelector("#search-button"); 
+const searchInput = document.querySelector("#user-input"); 
+const alertContainer = document.querySelector("#alert-container"); 
+const getLocalDiv = document.querySelector("#get-local"); 
+const forecasts = document.querySelector("#forecasts"); 
+const mostRecent = document.querySelector("#most-recent"); 
+const addedSearches = document.querySelector("#added-searches"); 
 
 //Set initial content of the current location element (#current-location) to waiting message. 
 getLocalDiv.innerHTML = "Retrieving Local Coordinates..."; 
 
 //Create array to store the stored searches. 
-var storedSearches = []; 
+let storedSearches = []; 
 
 //Load the searched terms from local storage. 
 getStoredSearches();
@@ -31,94 +31,14 @@ getStoredSearches();
 //Determine where the user is located. This may take a few seconds to change content of #current-location element.
 getCurrentLocation(); 
 
-function getStoredSearches() {
-    //Clear the current stored searches.
-    storedSearches = [];
+//FUNCTIONS
 
-    //Go through each item in local stroage. 
-    for(var i in localStorage) {
-        var thisItem = String(i); 
-        
-        //If not null or undefined, store in an array. 
-        if(localStorage.getItem(thisItem) && thisItem.includes("WeatherAppSearchId")) {
-            storedSearches.push(JSON.parse(localStorage.getItem(thisItem))); 
-        }
-    }
-
-    //Display the stored searches in HTML.
-    dispalyStoredSearches(); 
-}
-
-function dispalyStoredSearches() {
-    //Create an element for each of the retrieved searches.
-
-    //Display the most recent search.
-    mostRecent.innerText = JSON.parse(localStorage.getItem("WeatherAppSearchMostRecent")); 
-
-    //Clear the current items from the added searches. 
-    addedSearches.innerHTML = ""; 
-
-    //Display other searches in the dropdown. 
-    for(var i = 0; i < storedSearches.length; i++) {
-        //If this is the most recent search, don't repeat it in the list.
-        if(storedSearches[i] === mostRecent.innerText) continue; 
-        //Create an a element for each item in the dropdown from the local storage list.
-        var thisSearch = document.createElement("a"); 
-        thisSearch.classList.add("dropdown-item"); 
-        thisSearch.setAttribute("href","#"); 
-        thisSearch.innerText = storedSearches[i]; 
-        addedSearches.appendChild(thisSearch); 
-    }
-
-    //When a user clicks a drop-down item, fill it into the search bar. 
-    var dropDownItems = document.querySelectorAll(".dropdown-item"); 
-    dropDownItems.forEach((dropDown) => {
-        dropDown.addEventListener("click", function(event) { 
-            //If a user clicks a drop down item, fill in the search field and construct the query string. 
-            searchInput.value = event.target.innerText;
-            constructQueryString(); 
-        }); 
-    }); 
-    
-}
-
-function getCurrentLocation() {
-    //Using the navigator object, pass callback function required for getCurrentPosition method.
-    navigator.geolocation.getCurrentPosition(locationRetrieved); 
-}
-
-function locationRetrieved(position) {
-    //Callback function for getCurrentPosition. To be executed when the local coordinates are available. 
-
-    //Clear the current location element. 
-    currentLocationElement.innerHTML = ""; 
-
-    //Create the button for getting local weather. 
-    var getLocalWeatherButton = document.createElement("button"); 
-    getLocalWeatherButton.setAttribute("type","button");
-    getLocalWeatherButton.classList.add("btn","btn-info","btn-sm","mt-2"); 
-    getLocalWeatherButton.setAttribute("id","get-local-weather-button"); 
-    getLocalWeatherButton.style.animation = "popout 0.5s"; 
-    getLocalWeatherButton.innerHTML = `Get Local Weather`;  
-
-    //Clear the loading message and replace with the get local weather button.
-    getLocalDiv.innerHTML = ""; 
-    getLocalDiv.appendChild(getLocalWeatherButton); 
-  
-    //Access the current latitude and longitude. 
-    currentLatitude = position.coords.latitude; 
-    currentLongitude = position.coords.longitude; 
-   
-    //Allow user to click the button to retrieve local weather.
-    getLocalWeatherButton.addEventListener("click", constructQueryString); 
-}
-
-function constructQueryString() { 
+constructQueryString = () => { 
     //This function will build a request string to be sent to the weather api. 
 
     //Initialize constant components of the query url. 
-    var APIKey = `cad48b62df2e8f5e0daca44aa7d21c78`; 
-    var queryString = `https://api.openweathermap.org/data/2.5/weather?`; 
+    let APIKey = `cad48b62df2e8f5e0daca44aa7d21c78`; 
+    let queryString = `https://api.openweathermap.org/data/2.5/weather?`; 
 
     if(event.target.id === "get-local-weather-button") {
         //Empty the search field if there is any text.
@@ -137,7 +57,7 @@ function constructQueryString() {
     retrieveWeatherData(queryString, APIKey); 
 }
 
-function retrieveWeatherData(query, APIKey) {
+retrieveWeatherData = (query, APIKey) => {
     //Using the passed in query string, search the weather api for a response. Extract the response using .json, then read the results. 
     fetch(query)
     .then(response => {
@@ -180,18 +100,18 @@ function retrieveWeatherData(query, APIKey) {
     
 }
 
-function saveSearch(search) {
+saveSearch = search => {
 
     //Create unique key for this search. 
-    var searchKey = `WeatherAppSearchId(${moment().valueOf()})`;
+    let searchKey = `WeatherAppSearchId(${moment().valueOf()})`;
 
     //This will be set to true if we find an instance of this location name already searched.
-    var containsSearch = false; 
+    let containsSearch = false; 
 
     //Look at each item in local storage. 
-    for(var i in localStorage) {
+    for(let item in localStorage) {
         //Save this current saved search. 
-        var thisSearch = String(i); 
+        let thisSearch = String(item); 
 
         //If the user's search input matches the current saved item, we know it is already in the search history and can stop looking.
         if(`"${search}"` === localStorage.getItem(thisSearch)) {
@@ -208,7 +128,7 @@ function saveSearch(search) {
 
     //Save this as the most recent search if it was typed in.
     if(search.length > 0) {
-        var recentKey = `WeatherAppSearchMostRecent`; 
+        let recentKey = `WeatherAppSearchMostRecent`; 
         localStorage.setItem(recentKey, JSON.stringify(search)); 
     }
 
@@ -216,17 +136,17 @@ function saveSearch(search) {
     storedSearches = getStoredSearches();
 }
 
-function styleHeader(data) {
+styleHeader = data => {
     //Insert a random image from Unsplash to better fit the current city. 
     document.querySelector("header").style.backgroundImage = `url('https://source.unsplash.com/1600x900/?,${data.weather[0].description},sky,${data.name}')`; 
 }
 
-function displayCurrentWeather(data, uvdata) {
+displayCurrentWeather = (data, uvdata) => {
     //Clear the current weather data.
     currentLocationElement.innerHTML = ""; 
 
     //Display current location name.
-    var locationOutput = document.createElement("div"); 
+    const locationOutput = document.createElement("div"); 
     locationOutput.classList.add("main-location"); 
     locationOutput.innerText = data.name; 
 
@@ -234,8 +154,8 @@ function displayCurrentWeather(data, uvdata) {
     currentLocationElement.appendChild(locationOutput); 
 
     //Display the current date. 
-    var currentDate = moment().format("dddd, MMMM Do YYYY"); 
-    var dateOutput = document.createElement("div"); 
+    let currentDate = moment().format("dddd, MMMM Do YYYY"); 
+    const dateOutput = document.createElement("div"); 
     dateOutput.classList.add("other-info"); 
     dateOutput.innerText = currentDate; 
 
@@ -243,7 +163,7 @@ function displayCurrentWeather(data, uvdata) {
     currentLocationElement.appendChild(dateOutput); 
 
     //Display the description. 
-    var descriptionOutput = document.createElement("div"); 
+    const descriptionOutput = document.createElement("div"); 
     descriptionOutput.classList.add("main-description"); 
     descriptionOutput.innerText = `- ${data.weather[0].description} -`; 
 
@@ -251,7 +171,7 @@ function displayCurrentWeather(data, uvdata) {
     currentLocationElement.appendChild(descriptionOutput); 
 
     //Display current temperature. 
-    var tempOutput = document.createElement("div"); 
+    const tempOutput = document.createElement("div"); 
     tempOutput.classList.add("main-temp"); 
 
     if(fahrenheit) {
@@ -273,14 +193,14 @@ function displayCurrentWeather(data, uvdata) {
     currentLocationElement.appendChild(tempOutput); 
 
     //Display the current icon. 
-    var iconDiv = document.createElement("div"); 
+    const iconDiv = document.createElement("div"); 
     iconDiv.innerHTML = icons[`${data.weather[0].icon}`]; 
 
     //Add the icon to the screen. 
     currentLocationElement.appendChild(iconDiv); 
 
     //Display the humidity. 
-    var humidityOutput = document.createElement("div"); 
+    const humidityOutput = document.createElement("div"); 
     humidityOutput.classList.add("other-info"); 
     humidityOutput.innerText = `Humidity: ${data.main.humidity}%`; 
 
@@ -288,7 +208,7 @@ function displayCurrentWeather(data, uvdata) {
     currentLocationElement.appendChild(humidityOutput); 
 
     //Display the wind speed. 
-    var windOutput = document.createElement("div"); 
+    const windOutput = document.createElement("div"); 
     windOutput.classList.add("other-info"); 
     windOutput.innerText = `Wind Speed: ${Number(data.wind.speed * 2.237).toFixed(1)} MPH`; 
 
@@ -296,10 +216,10 @@ function displayCurrentWeather(data, uvdata) {
     currentLocationElement.appendChild(windOutput); 
 
     //Display the UV Index. 
-    var uvOutput = document.createElement("div"); 
+    const uvOutput = document.createElement("div"); 
     uvOutput.classList.add("other-info"); 
     //Access the UV index and determine safety range. 
-    var uvIndex = Math.round(uvdata[0].value); 
+    let uvIndex = Math.round(uvdata[0].value); 
     uvOutput.innerText = `UV Index: ${uvIndex}`; 
     if(uvIndex >= 8) {
         uvOutput.innerHTML += `<span class="text-danger"><i class="uv-index"> (Very High)</i></span>`; 
@@ -315,23 +235,23 @@ function displayCurrentWeather(data, uvdata) {
     currentLocationElement.appendChild(uvOutput); 
 }
 
-function displayForecast(data) {
+displayForecast = data => {
     //Clear the forecast section.
     forecasts.innerHTML = ""; 
 
     //Loop through each of the 5 forecasts over 24 hour increments, since the api returns data for every 3 hours. 
-    for(var thisForecast = 0; thisForecast < (numForecasts * 8); thisForecast += 8) {
+    for(let thisForecast = 0; thisForecast < (numForecasts * 8); thisForecast += 8) {
         //Main card. 
-        var forecastCard = document.createElement("div"); 
+        const forecastCard = document.createElement("div"); 
         forecastCard.classList.add("card","mx-auto","mx-xl-2","mb-3"); 
 
         //Card header for date. 
-        var forecastCardHeader = document.createElement("div"); 
+        const forecastCardHeader = document.createElement("div"); 
         forecastCardHeader.classList.add("card-header","bg-info","text-light"); 
         forecastCardHeader.innerText = formatDate(String(data.list[thisForecast].dt_txt).slice(0,10));
 
         //Temperature output.
-        var forecastTemp = document.createElement("h1"); 
+        const forecastTemp = document.createElement("h1"); 
         forecastTemp.classList.add("card-title"); 
 
         if(fahrenheit) {
@@ -350,20 +270,20 @@ function displayForecast(data) {
         }
 
         //Icon
-        var forecastIcon = document.createElement("div"); 
+        const forecastIcon = document.createElement("div"); 
         forecastIcon.innerHTML = icons[`${data.list[thisForecast].weather[0].icon}`]; 
         
         //Card body
-        var forecastCardBody = document.createElement("div"); 
+        const forecastCardBody = document.createElement("div"); 
         forecastCardBody.classList.add("card-body"); 
 
         //Description of weather for card body. 
-        var forecastDescription = document.createElement("h5"); 
+        const forecastDescription = document.createElement("h5"); 
         forecastDescription.classList.add("card-text"); 
         forecastDescription.innerText = data.list[thisForecast].weather[0].description; 
 
         //Humidity for card body. 
-        var forecastHumidity = document.createElement("p"); 
+        const forecastHumidity = document.createElement("p"); 
         forecastHumidity.classList.add("card-text"); 
         forecastHumidity.innerText = `Humidity: ${data.list[thisForecast].main.humidity}%`; 
 
@@ -379,32 +299,28 @@ function displayForecast(data) {
 } 
 
 //Unit conversion functions
-function kToFahrenheit(kelvin) {
-    return Math.round((kelvin - 273.15) * (9 / 5) + 32); 
-}
+kToFahrenheit = kelvin => Math.round((kelvin - 273.15) * (9 / 5) + 32); 
 
-function kToCelcius(kelvin) {
-    return Math.round(kelvin - 273.15); 
-}
+kToCelcius = kelvin => Math.round(kelvin - 273.15); 
 
-function formatDate(date) { 
+formatDate = date => { 
     //Formats date returned from API into MM/DD/YYYY format. 
-    var year = date.slice(0,4); 
-    var month = date.slice(5,7);  
-    var day = date.slice(8,10); 
+    let year = date.slice(0,4); 
+    let month = date.slice(5,7);  
+    let day = date.slice(8,10); 
    
     return `${month}/${day}/${year}`; 
 }
 
-function toggleTemperature() {
+toggleTemperature = () => {
     //When the user toggles the temperature unit, change the temperatures on the screen.
     
     //Access every element with the class of temp. 
-    var elements = document.querySelectorAll(".temp"); 
+    const elements = document.querySelectorAll(".temp"); 
     //For each element, change to the appropriate unit of measurement. 
     elements.forEach((element) => {
         //Access this particular element's inner temperature measurement. 
-        var temp = Number(element.innerText); 
+        let temp = Number(element.innerText); 
         //Convert between temperature units. 
         if(fahrenheit) {
             element.innerText = Math.round((temp - 32) * (5 / 9)); 
@@ -417,25 +333,25 @@ function toggleTemperature() {
     fahrenheit = fahrenheit ? false : true; 
 }
 
-function renderAlert() {
+renderAlert = () => {
     //Render the alert for invalid search.
     //Clear the alert container in case there is already an alert. 
     alertContainer.innerHTML = ""; 
 
     //Create the div where the alert will sit. 
-    var alertDiv = document.createElement("div"); 
+    const alertDiv = document.createElement("div"); 
     alertDiv.classList.add("alert","alert-danger","alert-dismissible","fade","show","mt-3");
     alertDiv.setAttribute("role","alert"); 
     alertDiv.innerText = "Error. Enter another location."; 
 
     //Create the button that will be in the alert for dismissing it.
-    var alertButton = document.createElement("button"); 
+    const alertButton = document.createElement("button"); 
     alertButton.setAttribute("type","button"); 
     alertButton.classList.add("close"); 
     alertButton.setAttribute("data-dismiss","alert"); 
 
     //Create the span that will hold the x.
-    var alertSpan = document.createElement("span"); 
+    const alertSpan = document.createElement("span"); 
     alertSpan.setAttribute("aria-hidden","true");
     alertSpan.innerHTML = "&times;"; 
     
