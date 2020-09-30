@@ -26,3 +26,6 @@ The user may switch between fahrenheit and celsius depending on preference at an
 * Keywords from the user's search and retrieved weather data is used to access random images from Unsplash, changing the background image for the user on each use. 
 * Dynamically-produced elements allow for a cleaner HTML homepage. 
 
+### License 
+
+Licensed under the [MIT License](./LICENSE.txt).
