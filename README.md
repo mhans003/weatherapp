@@ -1,13 +1,13 @@
 # Weather Dashboard
 
-### Deployed Application 
+## Deployed Application 
 
 [Weather Dashboard](https://mhans003.github.io/weatherapp/)
 
 ![Screenshot of Weather Dashboard](./assets/images/weatherappscreenshotsf.jpg)
 ![Screenshot of Weather Forecast](./assets/images/forecastexample.jpg)
 
-### Description 
+## Description 
 
 This program is a weather application that allows the user to retrieve the current weather and 5-day forecast for a city. 
 
@@ -15,7 +15,7 @@ When the program initiates, any previous searches stored in the browser's local 
 
 The user may switch between fahrenheit and celsius depending on preference at any time, and the 5-day forecast for the selected city will appear at the bottom of the page when a city's current weather is searched for and retrieved. 
 
-### Features
+## Features
 
 * Openweathermap API is used to retrieve live weather data, forecast, and UV data to display to the user. 
 * Responsive to screen sizes across devices. 
@@ -25,7 +25,15 @@ The user may switch between fahrenheit and celsius depending on preference at an
 * Demonstrates the use of the browser's local storage utilizing localStorage and JSON methods. 
 * Keywords from the user's search and retrieved weather data is used to access random images from Unsplash, changing the background image for the user on each use. 
 * Dynamically-produced elements allow for a cleaner HTML homepage. 
+* JavaScript, HTML, CSS
 
-### License 
+## Contact
+
+Michael Hanson
+* michaeledwardhanson@gmail.com
+* [GitHub](https://github.com/mhans003)
+* [LinkedIn](https://www.linkedin.com/in/michaeledwardhanson/)
+
+## License 
 
 Licensed under the [MIT License](./LICENSE.txt).
